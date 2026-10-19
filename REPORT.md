@@ -2,7 +2,7 @@
 
 The editor is served at **http://127.0.0.1:8765/** for Mohammad to try. The application is plain HTML, CSS and JavaScript with CDN libraries: no npm project, framework, build step, or leftover scaffolding.
 
-**Recording is on hold per Mohammad’s latest instruction. No `demo.mp4` was recorded.** This overrides the older video instructions in `BRIEF.md` and `REDESIGN.md`.
+**Demo video: [demo.mp4](demo.mp4)** (1:56, 1920×1080, narrated). See [Demo video](#demo-video) below.
 
 ## Run
 
@@ -91,4 +91,15 @@ Application: `index.html` and `editor.js`. Tests: `tests/`. No build artifacts o
 
 CDN dependencies: PDF.js 3.11.174, pdf-lib 1.17.1, @pdf-lib/fontkit 1.1.1, MuPDF.js 1.27.0, Noto Sans, Noto Sans Arabic and Noto Naskh Arabic. Icons are inline SVG. MuPDF.js is distributed under the GNU AGPL; see its [upstream licensing information](https://mupdf.readthedocs.io/en/latest/license.html). Other dependency licenses remain with their upstream projects.
 
-Preflight evidence: `evidence/redesign/preflight.json` and `preflight-report.json`. **READY — verification and local serving.** Recording remains intentionally on hold.
+Preflight evidence: `evidence/redesign/preflight.json` and `preflight-report.json`. **READY — verification and local serving.**
+
+## Demo video
+
+[demo.mp4](demo.mp4) is a how-to walkthrough on `samples/real-contract-ar.pdf`, recorded from the real editor at http://127.0.0.1:8765. It covers 12 steps: open the file, edit the Arabic title, style it, add a text box, draw a rectangle, highlight text, draw and place a signature, find and replace, duplicate/rotate/reorder pages, undo, export, and open the saved PDF in Chromium's PDF viewer. It ends on a card linking to github.com/shreemWakecap/pdf-editor.
+
+- Capture: headless Chromium driven through the public UI, with CDP screencast frames at 1920×1080 and a recording-only cursor and step-caption overlay. Zero page errors during capture.
+- Narration: Gemini `gemini-3.1-flash-tts-preview`, voice Aoede. Each step's narration is aligned with whisper and placed at the step's start; measured audio/video drift is 0.1 s.
+- The exported file shown in the video was checked with Poppler: 3 pages; text contains `اتفاقية عمل`, `نسخة للمراجعة` and `المادة الرابعة`, and no longer contains `عقد عمل` or `البند الرابع`. Rendered pages show the frame, highlight and signature.
+- Find and replace matches substrings, so the clause 14 heading on page 3 (`البند الرابع عشر`) also became `المادة الرابعة عشر`.
+
+The recording scripts are a one-off and not part of the app. They live in the local, git-ignored `videos/demoit-paper-studio-20261019-150431/` folder.
