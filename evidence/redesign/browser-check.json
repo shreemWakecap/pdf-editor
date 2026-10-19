@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    "Arabic normalization and editing",
+    "font family size bold underline",
+    "text box",
+    "rectangle",
+    "highlight",
+    "drawn signature",
+    "page deletion/reordering",
+    "undo/redo",
+    "Arabic find",
+    "theme and RTL UI",
+    "localStorage restore",
+    "PDF export"
+  ]
+}

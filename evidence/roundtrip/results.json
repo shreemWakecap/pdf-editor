@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "label": "Original has 3 pages",
+      "pass": true
+    },
+    {
+      "label": "Arabic normalized after bidi; ligature order intact",
+      "pass": true
+    },
+    {
+      "label": "UI page delete and drag reorder",
+      "pass": true
+    },
+    {
+      "label": "first: two pages and rotations 90°, 0°",
+      "pass": true
+    },
+    {
+      "label": "first: correct page order",
+      "pass": true
+    },
+    {
+      "label": "first: new Arabic text, find/replace, no stale replacements",
+      "pass": true
+    },
+    {
+      "label": "first: untouched original page 2 pixel diff",
+      "mae": 0,
+      "changedFraction": 0,
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "label": "first: untouched vectors render within tolerance",
+      "pass": true
+    },
+    {
+      "label": "first: rectangle border in expected region",
+      "pass": true
+    },
+    {
+      "label": "first: signature image in expected region",
+      "pass": true
+    },
+    {
+      "label": "first: yellow highlight in expected region",
+      "pass": true
+    },
+    {
+      "label": "first: new Arabic text box in expected region",
+      "pass": true
+    },
+    {
+      "label": "first: whiteout removed visible source label",
+      "pass": true
+    },
+    {
+      "label": "Rebuilt saved PDF opens with correct Arabic and no ghost text",
+      "pass": true
+    },
+    {
+      "label": "second: two pages and rotations 90°, 0°",
+      "pass": true
+    },
+    {
+      "label": "second: correct page order",
+      "pass": true
+    },
+    {
+      "label": "second: new Arabic text, find/replace, no stale replacements",
+      "pass": true
+    },
+    {
+      "label": "second: untouched original page 2 pixel diff",
+      "mae": 0,
+      "changedFraction": 0,
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "label": "second: untouched vectors render within tolerance",
+      "pass": true
+    },
+    {
+      "label": "second: rectangle border in expected region",
+      "pass": true
+    },
+    {
+      "label": "second: signature image in expected region",
+      "pass": true
+    },
+    {
+      "label": "second: yellow highlight in expected region",
+      "pass": true
+    },
+    {
+      "label": "second: new Arabic text box in expected region",
+      "pass": true
+    },
+    {
+      "label": "second: whiteout removed visible source label",
+      "pass": true
+    },
+    {
+      "label": "Final PDF opens without page or console errors",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "started": "2026-10-19T11:45:08.608Z",
+  "tolerances": {
+    "untouchedPageMAE": 2,
+    "untouchedChangedFraction": 0.04,
+    "pixelAlignment": 1
+  },
+  "finished": "2026-10-19T11:45:17.238Z"
+}

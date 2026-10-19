@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": [
+    "Blank page, single/continuous view, zoom and fit",
+    "Ellipse, line, arrow, pen, note, date, multiline styled text",
+    "Move, resize, rotation, opacity, lock, layers, duplicate/delete, multiselect and shortcuts",
+    "ellipse visible in exported PDF",
+    "line visible in exported PDF",
+    "arrow visible in exported PDF",
+    "pen visible in exported PDF",
+    "note visible in exported PDF",
+    "date visible in exported PDF",
+    "styled text visible in exported PDF",
+    "Page duplication, theme/RTL, dialogs, draft restoration and PDF export",
+    "Reset original can be undone",
+    "Print opens the exported PDF viewer"
+  ],
+  "errors": []
+}

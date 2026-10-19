@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "session": "pdf-editor-redesign-20261019",
+  "cwd": "/Users/admin/wkp/proto-codex/pdf-html-editor",
+  "task": "Finish REDESIGN.md + automated Arabic PDF round-trip test. Serve localhost:8765. Video recording explicitly on HOLD.",
+  "manifest_hash": "9cd561d635db9af353a4a873d5f28c56f1c6efcff6f04d19ebb0a0b7a25ec518",
+  "checks": {
+    "python": {
+      "status": "pass",
+      "evidence": "Executable available.",
+      "observed_at": 1792409811.825255,
+      "observer": "runner"
+    },
+    "git": {
+      "status": "pass",
+      "evidence": "Executable available.",
+      "observed_at": 1792409811.825276,
+      "observer": "runner"
+    },
+    "pdfjs": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409811.9992971,
+      "observer": "runner"
+    },
+    "pdflib": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409812.478891,
+      "observer": "runner"
+    },
+    "fontkit": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409812.829646,
+      "observer": "runner"
+    },
+    "latin": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409813.1764622,
+      "observer": "runner"
+    },
+    "arabic": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409813.315743,
+      "observer": "runner"
+    },
+    "local": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409813.33527,
+      "observer": "runner"
+    },
+    "pdftotext": {
+      "status": "pass",
+      "evidence": "Probe command exited 0. Scope is limited to this probe.",
+      "observed_at": 1792409813.399178,
+      "observer": "runner"
+    },
+    "pdftoppm": {
+      "status": "pass",
+      "evidence": "Probe command exited 0. Scope is limited to this probe.",
+      "observed_at": 1792409813.420788,
+      "observer": "runner"
+    },
+    "text-removal-engine": {
+      "status": "pass",
+      "evidence": "HTTP 200; transport only, not browser login or API quota.",
+      "observed_at": 1792409813.786678,
+      "observer": "runner"
+    },
+    "test-browser": {
+      "status": "pass",
+      "evidence": "Installed Chromium executed tests/roundtrip.test.mjs against real-contract-ar.pdf, 25 passing assertions/measurements, zero console/page errors, outputs in evidence/roundtrip/results.json. Browser launch uses approved escalation outside sandbox.",
+      "observer": "agent",
+      "observed_at": 1792409842.095801
+    },
+    "node": {
+      "status": "pass",
+      "evidence": "Executable available.",
+      "observed_at": 1792409813.786942,
+      "observer": "runner"
+    },
+    "ffmpeg-pixels": {
+      "status": "pass",
+      "evidence": "Probe command exited 0. Scope is limited to this probe.",
+      "observed_at": 1792409813.8213918,
+      "observer": "runner"
+    },
+    "pdfinfo": {
+      "status": "pass",
+      "evidence": "Probe command exited 0. Scope is limited to this probe.",
+      "observed_at": 1792409813.84438,
+      "observer": "runner"
+    }
+  }
+}

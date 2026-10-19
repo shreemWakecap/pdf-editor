@@ -1,0 +1,21 @@
+Title:           roundtrip-first
+Creator:         pdf-lib (https://github.com/Hopding/pdf-lib)
+Producer:        Paper Studio • pdf-lib
+CreationDate:    Mon Oct 19 14:45:16 2026 +03
+ModDate:         Mon Oct 19 14:45:16 2026 +03
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page    1 size:  595.276 x 841.89 pts (A4)
+Page    1 rot:   90
+Page    2 size:  595.276 x 841.89 pts (A4)
+Page    2 rot:   0
+File size:       68309 bytes
+Optimized:       no
+PDF version:     1.7

@@ -1,73 +1,94 @@
-# PDF editor prototype
+# Paper Studio — redesign report
 
-Completed against the **UPDATE** in `BRIEF.md`: one standalone `index.html`, plain JavaScript and CSS, CDN libraries, no npm, framework, build step, or Playwright. No scaffolding had been created before the update. Nothing was deployed.
+The editor is served at **http://127.0.0.1:8765/** for Mohammad to try. The application is plain HTML, CSS and JavaScript with CDN libraries: no npm project, framework, build step, or leftover scaffolding.
 
-## Run locally
+**Recording is on hold per Mohammad’s latest instruction. No `demo.mp4` was recorded.** This overrides the older video instructions in `BRIEF.md` and `REDESIGN.md`.
+
+## Run
+
+The static server has been left running. An optional refresh of the existing user browser tab was blocked by automatic approval review because it could discard in-browser edits; that tab was left untouched. Open the URL to load the current server code. If the server is stopped later:
 
 ```sh
 cd /Users/admin/wkp/proto-codex/pdf-html-editor
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-URL: **http://127.0.0.1:8765/**
+Open the URL, choose **Open**, and select `samples/real-contract-ar.pdf`. Internet access is needed for the CDN libraries, worker, WASM and fonts. PDF processing happens in the browser; the static server does not upload or process documents.
 
-The local server was left running. Do not start a second server on the same port while it is running. Internet access is needed for the CDN scripts, PDF.js worker and fonts. The server only serves static files; PDF bytes are processed in the browser.
+## Delivered
 
-## What works
+- Redesigned toolbar, page sidebar with live edited thumbnails, centered pages, contextual property controls, edit status, shortcuts help, light/dark themes, and English/Arabic interface with RTL layout.
+- Open or drop PDFs; export with a chosen filename; Print opens the edited PDF in the browser’s PDF viewer; reset to original with undo.
+- Zoom, fit page/width, page navigation/jump, thumbnails, and single/continuous views.
+- Inline editing, double-click editing in Select mode, multiple selection, three Noto font families, size, bold/italic/underline, color/background, alignment/direction, letter/line spacing, and optional automatic fitting to the original text box.
+- Text, rectangle, ellipse, line, arrow, freehand pen, highlighter, PNG/JPEG image, drawn signature, note, date and whiteout tools.
+- Drag, resize, numeric rotation/position/size, opacity, duplication, deletion, locking and layer order. Locked objects resist deletion and movement.
+- Add blank pages, duplicate/delete/rotate pages, reorder by thumbnail drag or buttons.
+- Arabic-aware find/replace; full session history and undo/redo; keyboard shortcuts; localStorage autosave with a restore/discard prompt.
+- PDF export preserves untouched vector content and embeds replacement fonts. Changed source text is removed from the PDF text layer before replacements are drawn. Shapes, images, notes and drawing strokes are exported into the PDF.
 
-- Upload a PDF through the native file picker; render multiple pages with editable text spans.
-- Edit text directly, including Arabic; Enter finishes a line, Escape restores that line, and Reset edits restores all lines.
-- Save a new PDF using the original document, covering only changed text regions and drawing replacements with embedded Noto fonts through fontkit. Untouched PDF content is not rasterized.
-- Generate an English two-page sample or Arabic one-page sample from the sidebar, with an original-sample download link.
-- Reject unsupported replacement characters instead of silently drawing missing glyphs; reduce longer replacements to the original line width.
+Arabic extraction explicitly disables PDF.js’s early normalization, then applies NFKC after bidi ordering. This fixes the contract’s presentation-form ligatures without reversing their characters. MuPDF removes replaced source text, preventing stale originals from returning during rebuild.
 
-## Manual verification — 2026-10-19
+## Required round-trip rebuild test
 
-Verified in local Chrome using accessibility controls and native file dialogs, with no Playwright or automated browser suite.
+```sh
+node tests/roundtrip.test.mjs
+```
 
-| Check | Result |
-| --- | --- |
-| Initial page and CDN libraries | Passed; app and sample generation loaded successfully. |
-| English multi-page sample | Passed; both pages rendered and exposed editable text. |
-| English edit and save | Passed; changed “The launch is scheduled for Monday.” to “The launch is scheduled for Tuesday.” and downloaded the result. |
-| File-picker upload / round trip | Passed; uploaded the downloaded English PDF; both pages loaded and the replacement was present. |
-| Arabic edit and save | Passed; changed “مرحبا بالعالم” to “مرحبا بالجميع”; saved and uploaded the downloaded copy. Joined Arabic glyphs and right-to-left placement were visually checked. |
-| Saved PDF content | PDF.js exposed the new English and Arabic text after reopening. macOS PDF preview also exposed the replacements, along with the retained covered originals. |
-| Page-two editing and reset | Passed on the final code; changed “team” to “client”, then Reset edits restored the original line and zero edited lines. |
-| JavaScript syntax | Passed using a local syntax-only parse; Node is not an app dependency. |
+**PASS — 25 assertions/measurements**, using the real three-page Arabic contract. Results: [evidence/roundtrip/results.json](evidence/roundtrip/results.json).
 
-The updated brief replaced the earlier full testing request with a quick manual check. `pdftotext`/`pdftoppm` were unavailable and were not installed. Saved pages were checked through PDF.js rendering and screenshots instead. No claim is made of exhaustive PDF compatibility or cross-browser testing.
+The test uses the public editor controls to change the Arabic title, find/replace a clause heading, add Arabic text, rectangle, highlighter, synthetic signature image and whiteout, delete page 3, reorder pages, and rotate the retained untouched page. It downloads the actual PDF, reopens those bytes through the file input, edits the title and added note again, saves again, and reopens the final file.
 
-Samples and actual browser downloads are preserved in `samples/`:
+| Assertion | First save | Second save |
+| --- | --- | --- |
+| Two pages, ordered original page 2 then original page 1 | PASS | PASS |
+| Rotations 90° and 0° | PASS | PASS |
+| New normalized Arabic title/note and find/replace result | PASS | PASS |
+| Replaced title/note, old clause heading and whiteout text absent from extraction | PASS | PASS |
+| Untouched page pixel comparison | MAE 0; changed pixels 0% | MAE 0; changed pixels 0% |
+| Rectangle, signature, highlighter and text in expected pixel regions | PASS | PASS |
+| Whiteout’s actual source label removed visually | PASS | PASS |
+| Saved files reopen without browser console/page errors | PASS | PASS |
 
-- `english-sample.pdf` and `english-sample-edited.pdf`
-- `arabic-sample.pdf` and `arabic-sample-edited.pdf`
+The pixel threshold is mean absolute RGB difference ≤2/255 and ≤4% changed pixels, with at most one pixel of alignment adjustment. Both comparisons achieved an exact match with no adjustment. The reference is the original PDF with only its page rotation set, rendered independently of the editor’s export/removal path. Rotating an already rasterized A4 PNG would introduce fractional-pixel antialiasing differences, so the test rotates the PDF before rendering.
 
-## Demo video — ON HOLD
+Outputs and inspection evidence:
 
-No `demo.mp4` has been recorded. The latest HOLD in `BRIEF.md` explicitly postpones recording until Mohammad supplies the real PDF path. Once that path arrives, the requested recording is 30–60 seconds: open page, upload that PDF, edit, save, and open the result. The add-on permits one-off headless capture; the app remains plain HTML with CDN dependencies. FFmpeg and an existing Playwright installation were located, but capture was not started or verified before the hold.
+- [First saved PDF](evidence/roundtrip/roundtrip-first.pdf)
+- [Second saved PDF](evidence/roundtrip/roundtrip-second.pdf)
+- [First edited page render](evidence/roundtrip/first-2.png)
+- [Second edited page render](evidence/roundtrip/second-2.png)
+- [Editor after the final rebuild](evidence/roundtrip/editor-rebuilt-final.png)
+- Extracted text, PDF metadata, original/reference/output PNGs and the synthetic signature fixture are all in `evidence/roundtrip/`.
 
-## Screenshots
+The signature used in automation is a synthetic test mark, not anyone’s real signature.
 
-Primary editor screenshot: **`/Users/admin/wkp/proto-codex/pdf-html-editor/shots/editor-english.png`**
+## Additional verification
 
-- `shots/editor-english.png` — edited English document.
-- `shots/editor-arabic.png` — edited Arabic document.
-- `shots/saved-english.png` — downloaded English PDF reopened through the file picker.
-- `shots/saved-arabic.png` — downloaded Arabic PDF reopened through the file picker.
+```sh
+node tests/controls.test.mjs
+```
 
-## Known limitations
+**PASS — 13 grouped checks; zero browser errors.** [Results](evidence/controls/results.json) and rendered output are saved in `evidence/controls/`. This complementary test exercises blank-page creation, page duplication, single/continuous views, zoom/fit, ellipse/line/arrow/pen, note/date, multiline text styling, move/resize/rotate/opacity, lock, layers, object duplication/deletion, multiselect and keyboard nudging, undo/redo, theme/RTL, dialogs, draft restoration, export pixel checks, reset/undo and printable PDF opening.
 
-1. **Visual replacement, not secure redaction.** The original text remains underneath white rectangles and can still be extracted or found. Reopening an edited PDF exposes both old and new text runs, which may overlap in the editor.
-2. **Not every PDF is editable.** Scans and outlined text need OCR, which is not included. Password-protected PDFs are unsupported. Rotated/skewed text and rotated pages are view-only. The prototype limits uploads to 40 MB and renders every page, so long documents can consume substantial memory.
-3. **Approximate typography.** Replacements use Noto Sans or Noto Sans Arabic in a dark color, rather than the exact original font/style/color. White masks may cover neighboring graphics or look wrong on colored backgrounds. Longer replacements shrink; there is no paragraph reflow or multiline insertion.
-4. **Arabic extraction can differ from rendering.** Pure Arabic was visually verified. PDF ligatures can produce imperfect extracted character order (observed in the sample heading); mixed Arabic/Latin runs and complex diacritics are not comprehensively handled or verified.
-5. **Session-only edits and CDN dependencies.** Opening another file/sample or refreshing discards unsaved edits. CDN access is required; third-party scripts execute in the page. The app has no upload endpoint, persistence, or offline dependency bundle. Modern Chrome was checked; other browsers were not.
+An additional real-contract check in `evidence/redesign/check-editor.cjs` exercises the drawn-signature pad, Arabic typography, page operations and restored-draft export. Its screenshots are in `shots/redesign-*.png`; its output is `evidence/redesign/real-contract-ar-edited.pdf`.
 
-## Evidence and implementation references
+The automated browser driver is **test-only**, explicitly allowed by the round-trip add-on. Tests use the already installed Playwright-core/Chromium, Node, Poppler (`pdftotext`, `pdftoppm`, `pdfinfo`) and FFmpeg/FFprobe. They start and stop their own temporary local HTTP server, leaving port 8765 alone. No npm installation is needed for this workspace. On another machine, make those test tools available and, if necessary, set `PLAYWRIGHT_MODULE`, `CHROMIUM_EXECUTABLE`, and `POPPLER_BIN`. Current Poppler tools are under `/tmp/pdf-editor-tools/bin`; that temporary installation may need replacing after cleanup/reboot.
 
-Preflight: `evidence/preflight.json` and `evidence/preflight-report.json` — READY for local implementation and browser verification. Task scope: `evidence/task.md`.
+## Practical limits
 
-The implementation follows the [PDF.js text-content API](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib.html) and [pdf-lib custom-font embedding API](https://pdf-lib.js.org/). Library versions are pinned in `index.html`: PDF.js 3.11.174, pdf-lib 1.17.1, and fontkit 1.1.1. Noto fonts are loaded from the notofonts CDN repository.
+- This is a text/annotation editor, not OCR. Scanned pages remain visible but do not gain editable text. Oblique/rotated source text runs that cannot be mapped safely are left in the original page.
+- Replacement text uses the selected Noto family; the original PDF’s exact typeface/style is not reconstructed. Existing page content is preserved where untouched. Complex PDFs, unusual crop boxes, mixed-script layout, forms and encrypted files have not received exhaustive compatibility testing.
+- Reopening an exported PDF rebuilds editable text from PDF extraction. Its existing shapes/images become PDF page content; their original object handles, locks and edit history are not reconstructed. The local draft retains the full editable object model and history.
+- Whiteout is not a secure-redaction promise: axis-aligned whiteout removes intersecting source text, but images/vector art remain under its visual cover; rotated whiteout is visual coverage. It does not sanitize all PDF metadata or attachments.
+- Signatures are visual marks, not cryptographic signatures. Notes are visible page annotations, not threaded PDF comments.
+- Autosave depends on browser storage quota. Large documents/history may exceed it; the app displays a failure message so the PDF can be exported. Files are limited to 40 MB and uploaded images to 8 MB.
+- Validation was performed in Chromium on the supplied contract and local samples; no claim is made of exhaustive cross-browser support.
 
-A local Git repository is initialized and the prototype, report, samples and screenshots are committed. There is no remote or deployment.
+## Source and dependencies
+
+Application: `index.html` and `editor.js`. Tests: `tests/`. No build artifacts or node_modules directory are part of the app.
+
+CDN dependencies: PDF.js 3.11.174, pdf-lib 1.17.1, @pdf-lib/fontkit 1.1.1, MuPDF.js 1.27.0, Noto Sans, Noto Sans Arabic and Noto Naskh Arabic. Icons are inline SVG. MuPDF.js is distributed under the GNU AGPL; see its [upstream licensing information](https://mupdf.readthedocs.io/en/latest/license.html). Other dependency licenses remain with their upstream projects.
+
+Preflight evidence: `evidence/redesign/preflight.json` and `preflight-report.json`. **READY — verification and local serving.** Recording remains intentionally on hold.

@@ -1,0 +1,57 @@
+// One-off local browser verification. Not an application dependency or npm project.
+const { chromium } = require('/Users/admin/.local/node-global/lib/node_modules/openclaw/node_modules/playwright-core');
+const fs=require('fs'),assert=require('assert'),path=require('path');
+const ROOT=path.resolve(__dirname,'../..');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'/Users/admin/Library/Caches/ms-playwright/chromium-1217/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'});
+ const context=await browser.newContext({viewport:{width:1600,height:1000},acceptDownloads:true});
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const action=async a=>page.locator(`[data-action="${a}"]`).first().click();
+ await page.goto('http://127.0.0.1:8765/');
+ await page.locator('#fileInput').setInputFiles(path.join(ROOT,'samples/real-contract-ar.pdf'));
+ await page.locator('#loading').waitFor({state:'hidden',timeout:60000});
+ assert.equal(await page.locator('.page-shell').count(),3);
+ console.log('LOADED',await page.locator('.object').count(),'objects');
+ console.log('TEXT SAMPLE',JSON.stringify((await page.locator('.object').evaluateAll(es=>es.slice(0,12).map(e=>e.getAttribute('aria-label'))))));
+ await page.screenshot({path:path.join(ROOT,'shots/redesign-loaded.png')});
+ const title=page.locator('.object').filter({has:page.locator('text')}).filter({hasText:'عقد عمل'}).first();
+ // Inspect the actual loaded Arabic label, then edit its native overlay.
+ const titleObject=page.locator('.object[aria-label="عقد عمل"]').first();
+ await titleObject.click();
+ await page.locator('.inline-edit').fill('عقد عمل محدّث');
+ await page.locator('.inline-edit').press('Escape');
+ assert.equal(await page.locator('.object[aria-label="عقد عمل محدّث"]').count(),1);
+ await page.locator('#fontFamily').selectOption('NotoArabic');
+ await page.locator('#objWidth').fill('190');await page.locator('#objWidth').press('Tab');
+ await page.locator('#posX').fill('202');await page.locator('#posX').press('Tab');
+ await page.locator('#align').selectOption('center');
+ await page.locator('#fontSize').fill('18');await page.locator('#fontSize').press('Tab');
+ await page.locator('[data-toggle="bold"]').click();
+ await page.locator('[data-toggle="underline"]').click();
+ await page.screenshot({path:path.join(ROOT,'shots/redesign-arabic-edit.png')});
+ console.log('ARABIC EDIT PASS');
+ const sheet=page.locator('.sheet').first();
+ const pos=async(x,y)=>{const b=await sheet.boundingBox();return {x:b.x+x*b.width/595.276,y:b.y+y*b.height/841.89};};
+ const draw=async(type,x,y,w,h)=>{await page.locator(`[data-tool="${type}"]`).click();const a=await pos(x,y),b=await pos(x+w,y+h);await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:12});await page.mouse.up();};
+ await draw('text',60,785,180,40);await page.locator('.inline-edit').fill('نسخة للمراجعة');await page.locator('.inline-edit').press('Escape');
+ await page.locator('#fontFamily').selectOption('NotoArabic');await page.locator('#direction').selectOption('rtl');await page.locator('#align').selectOption('right');
+ await draw('rect',340,777,190,40);await page.locator('#noFill').check();
+ await draw('highlight',310,160,210,16);
+ await action('signature');const pad=page.locator('#signaturePad'),box=await pad.boundingBox();await page.mouse.move(box.x+60,box.y+100);await page.mouse.down();for(const [x,y] of [[90,80],[130,120],[160,60],[190,105],[230,90],[280,110]])await page.mouse.move(box.x+x,box.y+y,{steps:4});await page.mouse.up();await action('signature-insert');const sign=await pos(350,783);await page.mouse.click(sign.x,sign.y);await page.locator('#objWidth').fill('160');await page.locator('#objWidth').press('Tab');await page.locator('#objHeight').fill('30');await page.locator('#objHeight').press('Tab');
+ console.log('TEXT SHAPE HIGHLIGHT SIGNATURE PASS');
+ await page.screenshot({path:path.join(ROOT,'shots/redesign-annotated.png')});
+ // Verify page operations, reversibility, and final order [original page 2, original page 1].
+ await page.locator('#pageJump').fill('3');await page.locator('#pageJump').press('Enter');await page.locator('#pageJump').press('Tab');
+ await action('page-delete');assert.equal(await page.locator('.page-shell').count(),2);
+ await action('undo');assert.equal(await page.locator('.page-shell').count(),3);
+ await action('redo');assert.equal(await page.locator('.page-shell').count(),2);
+ await page.locator('#pageJump').fill('1');await page.locator('#pageJump').press('Tab');await page.waitForTimeout(550);console.log('BEFORE REORDER',await page.locator('#pageJump').inputValue());await action('page-down');
+ assert.equal(await page.locator('#pageJump').inputValue(),'2');assert((await page.locator('.sheet').first().locator('.object').evaluateAll(es=>es.map(e=>e.getAttribute('aria-label')).join(' '))).includes('البند الخامس'),'Page order must match reordered thumbnails');
+ console.log('PAGE DELETE REORDER UNDO REDO PASS');
+ await action('find');await page.locator('#findInput').fill('عقد عمل');assert((await page.locator('#findCount').innerText()).includes('1'));await action('find-close');
+ await action('theme');await page.screenshot({path:path.join(ROOT,'shots/redesign-dark.png')});await action('theme');await action('language');assert.equal(await page.locator('html').getAttribute('dir'),'rtl');await page.screenshot({path:path.join(ROOT,'shots/redesign-arabic-ui.png')});await action('language');
+ await page.waitForTimeout(900);await page.reload();await page.locator('#restoreDialog').waitFor({state:'visible'});await action('draft-restore');await page.locator('#loading').waitFor({state:'hidden',timeout:60000});assert.equal(await page.locator('.page-shell').count(),2);assert.equal(await page.locator('.object[aria-label="عقد عمل محدّث"]').count(),1);console.log('DRAFT RESTORE PASS');
+ await action('export-dialog');await page.locator('#exportName').fill('real-contract-ar-edited.pdf');const down=page.waitForEvent('download');await action('save');const download=await down;await download.saveAs(path.join(ROOT,'evidence/redesign/real-contract-ar-edited.pdf'));console.log('PDF EXPORTED');
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(ROOT,'evidence/redesign/browser-check.json'),JSON.stringify({passed:true,errors,checks:['Arabic normalization and editing','font family size bold underline','text box','rectangle','highlight','drawn signature','page deletion/reordering','undo/redo','Arabic find','theme and RTL UI','localStorage restore','PDF export']},null,2));
+ await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});
