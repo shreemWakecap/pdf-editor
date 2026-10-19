@@ -1,1 +1,3 @@
 Target: this standalone folder, per BRIEF.md UPDATE. Create index.html, samples/evidence, shots, REPORT.md; initialize Git and commit. No npm, framework, build, Playwright or deployment. Execute on local macOS; serve only 127.0.0.1:8765 using Python. Session: pdf-editor-20261019. Browser check follows the updated brief. No matching saved profile. Existing WKP memory concerns another application, not this standalone prototype.
+
+ADD-ON / HOLD: demo.mp4 requested, then explicitly paused until Mohammad provides a real PDF path. No recording started. One-off headless capture is permitted only for that future recording. Editor implementation and manual verification are complete.

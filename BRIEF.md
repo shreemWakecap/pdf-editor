@@ -18,3 +18,12 @@ a screenshot of the editor (save under shots/).
 Plain HTML and JavaScript only: a single index.html (plus maybe one .js file), libraries from CDN (pdf.js, pdf-lib, fontkit),
 no framework, no build step, no npm. Skip the Playwright test suite; just a quick manual check that upload, edit and save work
 (e.g. serve with `python3 -m http.server`). Still no deploy. Remove any npm/framework scaffolding already created.
+
+## ADD-ON: demo video
+When it works, record a short (30-60 s) screen recording of the full flow: open the page, upload a sample PDF,
+edit some text, click Save, then open the new PDF to show the edit. Save as demo.mp4 in this folder
+(a headless browser recording, e.g. Playwright recordVideo via npx, converted with ffmpeg, is fine for this
+one-off; it's not part of the app). Put the path in REPORT.md. If recording isn't possible, say so in REPORT.md.
+
+## HOLD on demo video
+Do NOT record demo.mp4 yet. Mohammad will provide a real PDF to demo with; wait for its path. Keep building the editor.

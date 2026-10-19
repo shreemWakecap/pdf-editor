@@ -33,6 +33,7 @@ Verified in local Chrome using accessibility controls and native file dialogs, w
 | File-picker upload / round trip | Passed; uploaded the downloaded English PDF; both pages loaded and the replacement was present. |
 | Arabic edit and save | Passed; changed “مرحبا بالعالم” to “مرحبا بالجميع”; saved and uploaded the downloaded copy. Joined Arabic glyphs and right-to-left placement were visually checked. |
 | Saved PDF content | PDF.js exposed the new English and Arabic text after reopening. macOS PDF preview also exposed the replacements, along with the retained covered originals. |
+| Page-two editing and reset | Passed on the final code; changed “team” to “client”, then Reset edits restored the original line and zero edited lines. |
 | JavaScript syntax | Passed using a local syntax-only parse; Node is not an app dependency. |
 
 The updated brief replaced the earlier full testing request with a quick manual check. `pdftotext`/`pdftoppm` were unavailable and were not installed. Saved pages were checked through PDF.js rendering and screenshots instead. No claim is made of exhaustive PDF compatibility or cross-browser testing.
@@ -41,6 +42,10 @@ Samples and actual browser downloads are preserved in `samples/`:
 
 - `english-sample.pdf` and `english-sample-edited.pdf`
 - `arabic-sample.pdf` and `arabic-sample-edited.pdf`
+
+## Demo video — ON HOLD
+
+No `demo.mp4` has been recorded. The latest HOLD in `BRIEF.md` explicitly postpones recording until Mohammad supplies the real PDF path. Once that path arrives, the requested recording is 30–60 seconds: open page, upload that PDF, edit, save, and open the result. The add-on permits one-off headless capture; the app remains plain HTML with CDN dependencies. FFmpeg and an existing Playwright installation were located, but capture was not started or verified before the hold.
 
 ## Screenshots
 
