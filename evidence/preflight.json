@@ -1,0 +1,83 @@
+{
+  "task": "Plain HTML PDF editor; local manual browser check",
+  "checks": [
+    {
+      "id": "python",
+      "kind": "binary",
+      "target": "python3",
+      "stages": [
+        "start",
+        "serve"
+      ]
+    },
+    {
+      "id": "git",
+      "kind": "binary",
+      "target": "git",
+      "stages": [
+        "start",
+        "commit"
+      ]
+    },
+    {
+      "id": "pdfjs",
+      "kind": "url",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "pdflib",
+      "kind": "url",
+      "target": "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "fontkit",
+      "kind": "url",
+      "target": "https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "latin",
+      "kind": "url",
+      "target": "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSans/NotoSans-Regular.ttf",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "arabic",
+      "kind": "url",
+      "target": "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "browser",
+      "kind": "agent",
+      "target": "http://127.0.0.1:8765",
+      "stages": [
+        "start",
+        "check"
+      ],
+      "ttl_seconds": 3600
+    }
+  ]
+}

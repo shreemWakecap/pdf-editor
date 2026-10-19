@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paper — PDF editor</title>
+<style>
+@font-face{font-family:Noto;src:url('https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSans/NotoSans-Regular.ttf')}
+@font-face{font-family:NotoArabic;src:url('https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf')}
+*{box-sizing:border-box}body{margin:0;background:#eeede9;color:#252e2b;font:14px system-ui,sans-serif}header{background:#fff;border-bottom:1px solid #dcded8;padding:19px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:5}.brand{font-size:24px;font-weight:750;letter-spacing:-1px}.brand span{color:#24745d}.tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#777}.actions{margin-left:auto;display:flex;gap:9px;align-items:center}button,.upload{border:1px solid #ced4ce;border-radius:7px;background:white;color:#273e34;padding:10px 15px;font:600 13px system-ui;cursor:pointer}button:hover,.upload:hover{background:#eef5f0}button.primary{background:#23684f;color:#fff;border-color:#23684f}button:disabled{opacity:.45;cursor:default}button:focus-visible,.upload:focus-within{outline:3px solid #6cb395;outline-offset:3px}#file{position:absolute;width:1px;height:1px;opacity:0}main{max-width:1240px;margin:auto;padding:26px 28px}.intro{display:flex;align-items:end;justify-content:space-between;margin:10px 0 22px}h1{font-size:25px;letter-spacing:-.7px;margin:0 0 8px}.muted{color:#68736d;margin:0;font-size:13px}.pill{font-size:12px;border:1px solid #cdd8d0;padding:7px 11px;border-radius:30px;color:#3b6b54;background:#f6faf6}.workspace{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px}aside{padding:22px;background:#fff;border:1px solid #dce0d9;border-radius:10px;align-self:start;position:sticky;top:100px}aside h2{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:#77847c;margin:0 0 14px}#filename{font-weight:650;overflow-wrap:anywhere;margin-bottom:8px}#count{font-size:12px;color:#68736d;margin-bottom:24px}.step{font-size:13px;line-height:1.6;margin:14px 0}.step b{display:inline-block;color:#3a8266;margin-right:7px}.note{font-size:12px;line-height:1.6;color:#6b756e;border-top:1px solid #e5e8e2;padding-top:15px;margin-top:22px}#pageLinks a{display:block;color:#35694f;padding:8px 0;text-decoration:none}#status{min-height:24px;font-size:13px;line-height:1.5;margin-bottom:18px;color:#3c6753}#status.error{color:#a33727}#empty{border:1px dashed #bdc8be;border-radius:12px;background:#f7f8f4;text-align:center;padding:90px 30px}.paper-icon{font-size:42px;color:#3b7a5d;margin-bottom:16px}#empty h2{font-size:24px;letter-spacing:-.6px;margin:0 0 10px}#empty p{color:#717c74;line-height:1.7;margin:0 0 22px}.samples{display:flex;justify-content:center;gap:10px;margin-top:22px;flex-wrap:wrap}.samples button{font-weight:500;font-size:12px}.page-wrap{margin:0 auto 30px;width:max-content;max-width:100%}.page-label{font-size:11px;color:#778179;letter-spacing:1px;margin:0 0 10px;text-transform:uppercase}.page{position:relative;background:#fff;box-shadow:0 3px 14px #182d1714;isolation:isolate}.page canvas{display:block;max-width:none}.text-run{position:absolute;white-space:pre;outline:none;overflow:visible;cursor:text;color:transparent;line-height:1.4;transform-origin:0 0;font-family:Noto,NotoArabic,sans-serif;z-index:1;min-width:3px}.text-run:hover{outline:1px solid #5aa783;background:#54b48312}.text-run:focus{outline:2px solid #3f9570;z-index:3}.text-run.changed,.text-run:focus{background:#fff;color:#161f19}.text-run.changed{box-shadow:0 2px 0 #6aac88}.text-run::selection{background:#a5d8bf;color:#142b20}#pages{overflow-x:auto;padding:4px 9px 10px}#sampleBar{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}#sampleBar button{font-size:11px;padding:7px 9px}footer{text-align:center;font-size:11px;color:#7f887f;padding:15px 20px 28px}a{color:#23684f}[hidden]{display:none!important}@media(max-width:750px){header{padding:15px;gap:10px}.tag{display:none}.actions{gap:5px}button,.upload{padding:9px 10px}main{padding:20px 12px}.workspace{grid-template-columns:1fr;gap:18px}aside{position:static;padding:16px}.step,.note,aside h2{display:none}#count{margin-bottom:0}#pageLinks{display:flex;gap:18px}.intro{align-items:start;gap:12px}h1{font-size:22px}.pill{font-size:10px;white-space:nowrap}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" defer></script>
+</head>
+<body>
+<header><div class="brand">paper<span>.</span></div><div class="tag">PDF text editor</div><div class="actions"><label class="upload">Open PDF<input id="file" type="file" accept=".pdf,application/pdf" aria-label="Open PDF"></label><button id="reset" disabled>Reset edits</button><button id="save" class="primary" disabled>Save PDF ↓</button></div></header>
+<main><div class="intro"><div><h1>A small edit. Same document.</h1><p class="muted">Open a PDF, click its text, and make it yours.</p></div><span class="pill">● Files stay in your browser</span></div>
+<div class="workspace"><aside><h2>Your document</h2><div id="filename">No PDF open</div><div id="count">Ready when you are</div><nav id="pageLinks" aria-label="PDF pages"></nav><div class="step"><b>01</b> Open your PDF</div><div class="step"><b>02</b> Click a line to edit</div><div class="step"><b>03</b> Save a new copy</div><p class="note">Best for short text changes on white pages. English and Arabic supported. Scanned pages need OCR first.<br><br>Edits cover the original text; they do not securely remove it.</p><div id="sampleBar"><button data-sample="en">English sample</button><button data-sample="ar">Arabic sample</button></div><a id="sampleDownload" hidden>Download original sample</a></aside>
+<section aria-label="Document editor"><div id="status" role="status" aria-live="polite">Choose a PDF to begin. Your original file is never overwritten.</div><div id="empty"><div class="paper-icon">▤</div><h2>Your PDF, ready for a revision.</h2><p>Editable text, right where it belongs.<br>Keep the pages, images, and layout you started with.</p><button id="choose" class="primary">Choose a PDF</button><div class="samples"><button data-sample="en">Try a two-page English PDF</button><button data-sample="ar">جرّب ملفًا عربيًا</button></div></div><div id="pages"></div></section></div></main>
+<footer>Local prototype · No account, no upload server · Libraries and fonts load from public CDNs</footer>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+const $ = id => document.getElementById(id);
+let original=null, pdf=null, name='', runs=[], busy=false, sampleUrl=null;
+const fonts={latin:'https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSans/NotoSans-Regular.ttf',arabic:'https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf'};
+const fontCache={};
+const isArabic=s=>/[\u0600-\u06ff\u0750-\u077f\u08a0-\u08ff]/u.test(s);
+const textOf=el=>el.textContent.replace(/[\r\n]+/g,' ').replace(/\u00a0/g,' ');
+function message(text,error=false){$('status').textContent=text;$('status').className=error?'error':'';}
+function controls(){runs.forEach(r=>r.el.contentEditable=busy?'false':'plaintext-only');const changed=runs.filter(r=>r.value!==r.original).length;$('save').disabled=busy||!original;$('reset').disabled=busy||!changed;$('file').disabled=busy;$('choose').disabled=busy;document.querySelectorAll('[data-sample]').forEach(b=>b.disabled=busy);$('count').textContent=pdf?`${pdf.numPages} page${pdf.numPages===1?'':'s'} · ${changed} edited line${changed===1?'':'s'}`:'Ready when you are';}
+async function fontBytes(key){if(!fontCache[key]){const res=await fetch(fonts[key]);if(!res.ok)throw Error('Could not load the editing font. Check your connection and try again.');fontCache[key]=await res.arrayBuffer();}return fontCache[key];}
+function download(bytes,filename){const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+function updateRun(r){r.value=textOf(r.el);r.el.classList.toggle('changed',r.value!==r.original);r.el.dir=isArabic(r.value)?'rtl':'ltr';r.el.style.fontFamily=isArabic(r.value)?'NotoArabic, Noto, sans-serif':'Noto, NotoArabic, sans-serif';const c=document.createElement('canvas').getContext('2d');c.font=`${r.size*r.scale}px ${isArabic(r.value)?'NotoArabic':'Noto'}`;const width=c.measureText(r.value).width;r.el.style.fontSize=`${r.size*r.scale*Math.min(1,r.width*r.scale/Math.max(width,1))}px`;controls();}
+async function openPdf(bytes,filename){
+ const task=pdfjsLib.getDocument({data:bytes.slice(),cMapUrl:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',cMapPacked:true,standardFontDataUrl:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/'});
+ task.onPassword=()=>{task.destroy();};
+ let next;try{next=await task.promise;}catch(e){throw Error('Could not open this PDF. It may be damaged or password-protected.');}
+ if(pdf)await pdf.destroy();pdf=next;original=bytes;name=filename;runs=[];$('pages').replaceChildren();$('pageLinks').replaceChildren();$('filename').textContent=name;$('empty').hidden=true;
+ let readonly=0;
+ for(let number=1;number<=pdf.numPages;number++){
+  message(`Opening page ${number} of ${pdf.numPages}…`);
+  const page=await pdf.getPage(number);const base=page.getViewport({scale:1});const scale=Math.min(1.25,Math.max(.45,($('pages').clientWidth-24)/base.width));const viewport=page.getViewport({scale});
+  const wrap=document.createElement('div');wrap.className='page-wrap';wrap.id=`page-${number}`;
+  const label=document.createElement('div');label.className='page-label';label.textContent=`Page ${String(number).padStart(2,'0')} / ${String(pdf.numPages).padStart(2,'0')}`;wrap.append(label);
+  const holder=document.createElement('div');holder.className='page';holder.style.width=`${viewport.width}px`;holder.style.height=`${viewport.height}px`;wrap.append(holder);$('pages').append(wrap);
+  const canvas=document.createElement('canvas');const ratio=Math.min(window.devicePixelRatio||1,2);canvas.width=viewport.width*ratio;canvas.height=viewport.height*ratio;canvas.style.width=`${viewport.width}px`;canvas.style.height=`${viewport.height}px`;holder.append(canvas);
+  await page.render({canvasContext:canvas.getContext('2d'),viewport,transform:[ratio,0,0,ratio,0,0]}).promise;
+  const content=await page.getTextContent();
+  for(const item of content.items){
+   if(!item.str?.trim())continue;
+   const [a,b,c,d,x,y]=item.transform;
+   if(page.rotate!==0||Math.abs(b)>.01||Math.abs(c)>.01||a<=0||d<=0){readonly++;continue;}
+   const size=Math.hypot(c,d),width=Math.max(item.width,3);const point=viewport.convertToViewportPoint(x,y);
+   const el=document.createElement('span');el.className='text-run';el.contentEditable='plaintext-only';el.setAttribute('role','textbox');el.setAttribute('aria-label',`Page ${number}: ${item.str}`);el.spellcheck=false;el.textContent=item.str;el.style.left=`${point[0]}px`;el.style.top=`${point[1]-size*1.08*scale}px`;el.style.width=`${width*scale}px`;el.style.minHeight=`${size*1.4*scale}px`;
+   const r={el,page:number-1,x,y,size,width,scale,original:item.str,value:item.str};runs.push(r);holder.append(el);updateRun(r);
+   el.addEventListener('input',()=>{updateRun(r);message('Edit ready. Save PDF downloads a new copy. Longer text is reduced to fit the original line.');});
+   el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur();}if(e.key==='Escape'){el.textContent=r.original;updateRun(r);el.blur();}});
+   el.addEventListener('paste',e=>{e.preventDefault();const text=e.clipboardData.getData('text/plain').replace(/[\r\n]+/g,' ');document.execCommand('insertText',false,text);});
+  }
+  const link=document.createElement('a');link.href=`#page-${number}`;link.textContent=`Page ${number}`;$('pageLinks').append(link);
+ }
+ controls();message(runs.length?`Click any text line to edit. ${readonly?'Rotated or skewed text is view-only.':''}`:'This PDF has no supported editable text. Scans and outlined text need OCR; you can still save a copy.');
+}
+async function work(fn){if(busy)return;busy=true;controls();try{await fn();}catch(e){console.error(e);message(e.message||'Something failed. Please try another PDF.',true);}finally{busy=false;controls();}}
+async function prepareFonts(){await Promise.all([document.fonts.load('16px Noto'),document.fonts.load('16px NotoArabic')]);}
+$('choose').onclick=()=>$('file').click();
+$('file').onchange=()=>{const file=$('file').files[0];if(!file)return;work(async()=>{message('Opening PDF…');if(file.size>40*1024*1024)throw Error('For this prototype, choose a PDF smaller than 40 MB.');await prepareFonts();await openPdf(new Uint8Array(await file.arrayBuffer()),file.name);$('sampleDownload').hidden=true;});$('file').value='';};
+$('reset').onclick=()=>{runs.forEach(r=>{r.el.textContent=r.original;updateRun(r);});message('All edits reset. The original document is unchanged.');};
+$('save').onclick=()=>work(async()=>{
+ document.activeElement?.blur();message('Preparing your PDF…');const changed=runs.filter(r=>r.value!==r.original);
+ if(!changed.length){download(original,name.replace(/\.pdf$/i,'')+'-edited.pdf');message('Original PDF copy downloaded.');return;}
+ const doc=await PDFLib.PDFDocument.load(original);doc.registerFontkit(fontkit);const embedded={};
+ for(const r of changed){
+  const key=isArabic(r.value)?'arabic':'latin';if(!embedded[key])embedded[key]=await doc.embedFont(await fontBytes(key),{subset:true});const font=embedded[key];
+  const supported=new Set(font.getCharacterSet());for(const char of r.value){if(!supported.has(char.codePointAt(0)))throw Error(`The editing font cannot display “${char}”. Remove that character before saving.`);}
+  const size=r.size*Math.min(1,r.width/Math.max(font.widthOfTextAtSize(r.value,r.size),1));const page=doc.getPage(r.page);
+  page.drawRectangle({x:r.x-.4,y:r.y-r.size*.3,width:r.width+.8,height:r.size*1.4,color:PDFLib.rgb(1,1,1)});
+  if(r.value){const width=font.widthOfTextAtSize(r.value,size);page.drawText(r.value,{x:r.x+(isArabic(r.value)?r.width-width:0),y:r.y,size,font,color:PDFLib.rgb(.086,.122,.098)});}
+ }
+ download(await doc.save(),name.replace(/\.pdf$/i,'')+'-edited.pdf');message(`Downloaded a new PDF with ${changed.length} edited line${changed.length===1?'':'s'}.`);
+});
+document.querySelectorAll('[data-sample]').forEach(button=>button.onclick=()=>work(async()=>{
+ message('Creating sample PDF…');await prepareFonts();const arabic=button.dataset.sample==='ar';const doc=await PDFLib.PDFDocument.create();doc.registerFontkit(fontkit);const font=await doc.embedFont(await fontBytes(arabic?'arabic':'latin'),{subset:true});
+ const lines=arabic?['ملاحظات المشروع','مرحبا بالعالم','هذا مستند عربي قابل للتعديل','يمكن حفظ نسخة جديدة بعد التعديل']:['A little room for better ideas.','Project notes','The launch is scheduled for Monday.','A small revision can make a big difference.'];
+ const color=PDFLib.rgb(.13,.32,.25);
+ for(let n=0;n<(arabic?1:2);n++){const p=doc.addPage([595,742]);p.drawRectangle({x:48,y:676,width:34,height:4,color});const list=n===0?lines:['The next chapter.','Page two','Review the proposal with the team.','Everything else stays exactly where it belongs.'];list.forEach((text,i)=>{const size=i===0?24:i===1?17:14;const width=font.widthOfTextAtSize(text,size);p.drawText(text,{x:arabic?547-width:48,y:632-i*65,size,font,color});});p.drawLine({start:{x:48,y:190},end:{x:547,y:190},thickness:1,color:PDFLib.rgb(.8,.85,.8)});p.drawText(arabic?'صفحة واحدة':`PAPER / NOTES                                      ${n+1} / 2`,{x:48,y:160,size:10,font,color});}
+ const bytes=await doc.save();await openPdf(bytes,arabic?'arabic-sample.pdf':'english-sample.pdf');if(sampleUrl)URL.revokeObjectURL(sampleUrl);sampleUrl=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));$('sampleDownload').href=sampleUrl;$('sampleDownload').download=name;$('sampleDownload').hidden=false;
+}));
+if(!window.pdfjsLib||!window.PDFLib||!window.fontkit){message('A CDN library did not load. Check your internet connection, then reload.',true);busy=true;controls();return;}
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+controls();
+});
+</script>
+</body>
+</html>
